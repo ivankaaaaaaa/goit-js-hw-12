@@ -1,4 +1,10 @@
 import axios from 'axios';
+import { refs, query, showLoader, currentPage, pageLimit} from "../main";
+
+const myAxios = axios.create ({
+    baseURL: "https://pixabay.com/api/",
+})
+
 export async function getImage(query) {
     const BASE_URL = 'https://pixabay.com/api/';
     const params = new URLSearchParams({

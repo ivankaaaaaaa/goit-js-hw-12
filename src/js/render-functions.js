@@ -1,44 +1,33 @@
-import { lightbox } from '../main';
-import { preloader } from '../main';
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
-export const card = document.querySelector('.gallery');
+import { refs, lightbox, displayMessage } from '../main';
 
-export function hideLoader() {
-  preloader.classList.add('is-hidden');
-}
 
-export function renderImages(arr) {
-  if (arr.length === 0) {
-    iziToast.error({
-      message:
-        'Sorry, there are no images matching your search query. Please try again!',
-      theme: 'dark',
-      progressBarColor: '#FFFFFF',
-      color: '#EF4040',
-      position: 'topRight',
-    });
-    hideLoader();
-  } else {
-    const markup = arr
-      .map(image => {
-        return `<li class="item-image"><a class="photos-list-link" href="${image.largeImageURL}">
-  <img class="photo" src="${image.webformatURL}" alt="${image.tags}"/>
-  </a>
-  <ul class="photo-information-container">
-  <li class="item-photo-information-container"><p><span class="accent">Likes</span>${image.likes}</p></li>
-  <li class="item-photo-information-container"><p><span class="accent">Views</span>${image.views}</p></li>
-  <li class="item-photo-information-container"><p><span class="accent">Comments</span>${image.comments}</p></li>
-  <li class="item-photo-information-container"><p><span class="accent">Downloads</span>${image.downloads}</p></li>
-  </ul>
-  </li>`;
-      })
-      .join('');
-    card.insertAdjacentHTML('beforeend', markup);
+export function render(data) {
+    if (data.hits.length === 0) {
+        displayMessage(
+        'Sorry, there are no images matching your search query. Please try again!'
+        );
+    } else {
+        const images = data.hits;
+
+        const markup = images.map(image => 
+            `<li class="gallery-item">
+                <a class="gallery-link" href="${image.largeImageURL}">
+                <img loading="lazy" class="gallery-image" src="${image.webformatURL}" alt="${image.tags}" />
+                </a>
+                <div class="stats">
+                    <p class="text">Likes<br/>${image.likes}</p>
+                    <p class="text">Views<br/>${image.views}</p>
+                    <p class="text">Comments<br/>${image.comments}</p>
+                    <p class="text">Downloads<br/>${image.downloads}</p>
+                </div>
+            </li>`).join('');
+
+    refs.gallery.insertAdjacentHTML('beforeend', markup);
     lightbox.refresh();
-  }
-  hideLoader();
+    }
 }
